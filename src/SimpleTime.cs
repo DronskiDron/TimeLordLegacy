@@ -31,7 +31,7 @@ namespace TimeLord
                 Year = ct.GetYear;
                 fracDays -= Year * Main.TimeParam.DayPerYear;
 
-                Season = ct.GetSeasonOfYear;
+                Season = (int)ct.GetSeasonOfYear;
                 fracDays -= Season * Main.TimeParam.DayPerSeason;
 
                 Day = ct.GetDayOfSeason;
@@ -41,7 +41,7 @@ namespace TimeLord
             }
             catch (Exception e)
             {
-                Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString());  Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace); 
+                Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString()); Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace);
             }
         }
 
@@ -53,16 +53,16 @@ namespace TimeLord
             {
                 // only intended for debugging
                 var ct = CampaignTimeExtensions.DaysD(FractionalDay);
-                var hour = (int) ct.ToHours;
-                var min = (int) ct.ToMinutes % TimeParams.MinPerHour;
-                var sec = (int) ct.ToSeconds % TimeParams.SecPerMin;
+                var hour = (int)ct.ToHours;
+                var min = (int)ct.ToMinutes % TimeParams.MinPerHour;
+                var sec = (int)ct.ToSeconds % TimeParams.SecPerMin;
                 var season = !IsSeasonValid ? $"[BAD_SEASON: {Season}]" : _seasonNames[Season];
 
                 return $"{season} {Day + 1}, {Year} at {hour:D2}:{min:D2}:{sec:D2} ({(100.0 * FractionalDay):F2}% of the day)";
             }
             catch (Exception e)
             {
-                Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString());  Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace); 
+                Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString()); Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace);
                 return base.ToString();
             }
         }

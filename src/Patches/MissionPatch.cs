@@ -43,13 +43,13 @@ namespace TimeLord.Patches
             }
             catch (Exception e)
             {
-                Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString());  Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace); 
+                Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString()); Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace);
             }
         }
 
         private static Agent CreateAgent(this Mission __instance, Monster monster, bool isFemale, int instanceNo, Agent.CreationType creationType, float stepSize, int forcedAgentIndex, int weight, BasicCharacterObject characterObject)
         {
-            return (Agent) CreateAgentMethod.Invoke(__instance, new object[] { monster, isFemale, instanceNo, creationType, stepSize, forcedAgentIndex, weight, characterObject });
+            return (Agent)CreateAgentMethod.Invoke(__instance, new object[] { monster, isFemale, instanceNo, creationType, stepSize, forcedAgentIndex, weight, characterObject });
         }
         private static void BuildAgent(this Mission __instance, Agent agent, AgentBuildData agentBuildData)
         {
@@ -59,9 +59,9 @@ namespace TimeLord.Patches
         private static Agent CreateHorseAgentFromRosterElements(this Mission __instance, EquipmentElement mount, EquipmentElement mountHarness, ref Vec3 initialPosition, ref Vec2 initialDirection, int forcedAgentMountIndex, string horseCreationKey)
         {
             object[] parameters = new object[] { mount, mountHarness, initialPosition, initialDirection, forcedAgentMountIndex, horseCreationKey };
-            var agent = (Agent) CreateHorseAgentFromRosterElementsMethod.Invoke(__instance, parameters);
-            initialPosition = (Vec3) parameters[2];
-            initialDirection = (Vec2) parameters[3];
+            var agent = (Agent)CreateHorseAgentFromRosterElementsMethod.Invoke(__instance, parameters);
+            initialPosition = (Vec3)parameters[2];
+            initialDirection = (Vec2)parameters[3];
 
             return agent;
 
@@ -124,7 +124,7 @@ namespace TimeLord.Patches
                 }
                 Agent formationPositionPreference = __instance.CreateAgent(agentBuildData.AgentMonster, (agentBuildData.GenderOverriden ? agentBuildData.AgentIsFemale : agentCharacter.IsFemale), 0, Agent.CreationType.FromCharacterObj, agentCharacter.GetStepSize(), agentIndex, agentBuildData.AgentMonster.Weight, agentCharacter);
                 formationPositionPreference.FormationPositionPreference = agentCharacter.FormationPositionPreference;
-                float single = (agentBuildData.AgeOverriden ? (float) agentBuildData.AgentAge : agentCharacter.Age);
+                float single = (agentBuildData.AgeOverriden ? (float)agentBuildData.AgentAge : agentCharacter.Age);
                 if (single == 0f)
                 {
                     agentBuildData.Age(29);
@@ -144,7 +144,7 @@ namespace TimeLord.Patches
                 formationPositionPreference.SetBodyPropertiesSeed(agentBuildData.AgentEquipmentSeed);
                 if (agentBuildData.AgeOverriden)
                 {
-                    formationPositionPreference.Age = (float) agentBuildData.AgentAge;
+                    formationPositionPreference.Age = (float)agentBuildData.AgentAge;
                 }
                 if (agentBuildData.GenderOverriden)
                 {
@@ -170,8 +170,9 @@ namespace TimeLord.Patches
                         Vec2? nullable1 = new Vec2?(agentFormation.Direction);
                         if (!agentBuildData.AgentSpawnsIntoOwnFormation)
                         {
-                            int num = (agentBuildData.AgentFormationTroopIndex >= 0 ? agentBuildData.AgentFormationTroopIndex : agentFormation.GroupSpawnIndex);
-                            agentFormation.GroupSpawnIndex++;
+                            int groupSpawnIndex = agentFormation.Index;
+                            int num = (agentBuildData.AgentFormationTroopSpawnIndex >= 0 ? agentBuildData.AgentFormationTroopSpawnIndex : agentFormation.Index);
+                            groupSpawnIndex++;
                             __instance.GetFormationSpawnFrame(agentFormation.Team.Side, agentFormation.FormationIndex, agentBuildData.AgentIsReinforcement, out worldPosition, out vec2);
                             agentFormation.GetUnitSpawnFrameWithIndex(num, worldPosition, vec2, agentFormation.Width, formationTroopCount, agentFormation.UnitSpacing, flag, out nullable, out nullable1);
                         }
@@ -311,14 +312,14 @@ namespace TimeLord.Patches
                 }
                 for (int i = 0; i < 5; i++)
                 {
-                    item = equipmentElement[(EquipmentIndex) i];
+                    item = equipmentElement[(EquipmentIndex)i];
                     if (!item.IsEmpty)
                     {
-                        item = equipmentElement[(EquipmentIndex) i];
+                        item = equipmentElement[(EquipmentIndex)i];
                         if (item.Item.ItemFlags.HasAnyFlag<ItemFlags>(ItemFlags.CannotBePickedUp))
                         {
                             item = new EquipmentElement();
-                            equipmentElement[(EquipmentIndex) i] = item;
+                            equipmentElement[(EquipmentIndex)i] = item;
                         }
                     }
                 }
@@ -459,7 +460,7 @@ namespace TimeLord.Patches
             }
             catch (Exception e)
             {
-                Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString());  Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace); 
+                Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString()); Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace);
                 return true;
             }
         }
@@ -481,7 +482,7 @@ namespace TimeLord.Patches
                     EquipmentElement item = agent.SpawnEquipment[EquipmentIndex.ArmorItemEndSlot];
                     if (item.Item.HorseComponent.BodyLength != 0)
                     {
-                        agent.SetInitialAgentScale(0.01f * (float) item.Item.HorseComponent.BodyLength);
+                        agent.SetInitialAgentScale(0.01f * (float)item.Item.HorseComponent.BodyLength);
                     }
                 }
                 agent.EquipItemsFromSpawnEquipment(true);
@@ -491,7 +492,7 @@ namespace TimeLord.Patches
                 ActionIndexCache currentAction = agent.GetCurrentAction(0);
                 if (currentAction != ActionIndexCache.act_none)
                 {
-                    agent.SetActionChannel(0, currentAction, false, (ulong) 0, 0f, 1f, -0.2f, 0.4f, MBRandom.RandomFloat * 0.8f, false, -0.2f, 0, true);
+                    agent.SetActionChannel(0, currentAction, false, (ulong)0, 0f, 1f, -0.2f, 0.4f, MBRandom.RandomFloat * 0.8f, false, -0.2f, 0, true);
                 }
                 agent.InitializeComponents();
                 if (agent.Controller == Agent.ControllerType.Player)
@@ -508,7 +509,7 @@ namespace TimeLord.Patches
             }
             catch (Exception e)
             {
-                Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString());  Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace); 
+                Debug.PrintError(e.Message, e.StackTrace); Debug.WriteDebugLineOnScreen(e.ToString()); Debug.SetCrashReportCustomString(e.Message); Debug.SetCrashReportCustomStack(e.StackTrace);
                 return true;
             }
         }
